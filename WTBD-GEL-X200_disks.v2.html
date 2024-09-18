@@ -219,7 +219,7 @@
 
         // Function to copy WTBD text to clipboard
         function copyToClipboard() {
-            const resultText = document.getElementById("result").innerText;
+            const resultText = document.getElementById("wtbd-field").innerText;
             navigator.clipboard.writeText(resultText).then(() => {
                 alert('WTBD text copied to clipboard');
             });
