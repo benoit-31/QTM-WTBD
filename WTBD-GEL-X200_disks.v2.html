@@ -235,6 +235,28 @@
         }
 
 
+        function copyToClipboard2() {
+            const resultText = document.getElementById("result").innerText;
+            
+            // Créer un élément temporaire <textarea> pour copier le texte
+            const textArea = document.createElement("textarea");
+            textArea.value = resultText;
+            
+            // Ajouter le textarea temporaire à la page
+            document.body.appendChild(textArea);
+            
+            // Sélectionner le texte dans le textarea
+            textArea.select();
+            
+            // Copier le texte sélectionné dans le presse-papiers
+            document.execCommand('copy');
+            
+            // Supprimer le textarea temporaire
+            document.body.removeChild(textArea);
+
+            alert('Text copied to clipboard');
+        }
+
         // Populate dropdowns when the page loads
         window.onload = function() {
             populateCustomerDropdown();
@@ -300,7 +322,7 @@
     <!-- WTBD Result Display -->
     <div class="wtbd-container">
         <h2>WTBD for X200 disk replacement at GEL</h2>
-        <button onclick="copyInPopup()">Copy to Clipboard</button>
+        <button onclick="copyToClipboard2()">Copy to Clipboard</button>
         <div class="wtbd-field" id="result">
             [WTBD will appear here]
         </div>
