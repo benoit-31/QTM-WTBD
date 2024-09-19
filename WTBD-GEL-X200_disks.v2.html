@@ -44,6 +44,9 @@
         .highlight {
             background-color: yellow;
         }
+        .default-highlight {
+            background-color: rgba(62, 188, 223, 0.733);
+        }
     </style>
 
     <script>
@@ -141,14 +144,16 @@
         function updateResult() {
             const customerName = document.getElementById("customerName").value;
             const nodeHostname = document.getElementById("nodeHostname").value || "<span class='highlight'>NodeName TBD</span>";
-            const slotNumber = document.getElementById("slotNumber").value || "<span class='highlight'>Slot-TBD</span>";
+            const enclosureType = document.getElementById("enclosureType").value || "<span class='highlight'>Enclosure type TBD</span>";
+            const slotNumber = document.getElementById("slotNumber").value;
+            const chassisSerial = document.getElementById("chassisSerial").value ? "- Chassis s/n " + document.getElementById("chassisSerial").value : "";
             const diskSerial = document.getElementById("diskSerial").value || "<span class='highlight'>s/n TBD</span>";
             const hddPN = document.getElementById("hddPN").value || "<span class='highlight'>TBD</span>";
             const partETA = document.getElementById("partETA").value;
             const feETA = document.getElementById("feETA").value;
 
-            const formattedPartETA = partETA ? formatDate(partETA) : "already on site";
-            const formattedFeETA = feETA ? formatDate(feETA) : "<span class='highlight'>Onsite ETA TBD</span>";
+            const formattedPartETA = partETA ? formatDate(partETA) : "<span class='default-highlight'>already on site</span>";
+            const formattedFeETA = feETA ? formatDate(feETA) : "<span class='default-highlight'>ASAP - arrange it with the customer contact</span>";
 
             const primaryContact = document.getElementById("primaryContact").value;
             const primaryContactInfo = techSupportContacts[primaryContact];
@@ -174,7 +179,7 @@
             const siteAddresses = {
                 "Site1": "Ark Data Centres, Spring Park, P2, Westwells Rd, Corsham, SN13 9GB, United Kingdom",
                 "Site2": "Ark Data Centres  (A103), Cody Technology Park, Bramshot Lane, Farnborough, Hampshire, GU14 0LH, United Kingdom",
-                "Site3": "<span class='highlight'>Site3 Address</span>"
+                "Site3": "Equinix - LD7,  1 Banbury Avenue, Slough, SL1 4LH,  United Kingdom"
             };
             const site = nodeHostname.split('-')[0]; // Extracts the site from the node hostname
 
@@ -187,7 +192,7 @@
                 ${secondaryContactText}<br><br>
                 Quantum Tech Support can be reached at 00800-9999-3822 from EMEA<br><br>
                 [ETA] <br>
-                Field Engineer - Onsite ETA = ${formattedFeETA}<br>
+                ${formattedFeETA}<br>
                 [END ETA]<br><br>
                 [CUSTOMER CONTACTS] <br>
                 ${customerContactText}<br>
@@ -203,7 +208,7 @@
                 [END PARTS]<br><br>
                 [ACTIONS] <br>
                 (1.) Identify the failed HDD with a faulty red LED, and confirm it matches with: <br>
-                ${nodeHostname} Slot ${slotNumber} - s/n ${diskSerial}<br>
+                ${nodeHostname} (${enclosureType}) ${chassisSerial} - Slot ${slotNumber} - HDD s/n ${diskSerial}<br>
                 (2a.) If the serial number is the expected one, replace with the new disk.<br>
                 (2b.) If the serial number is not the expected one or the failed drive does not match with the expected location, contact Quantum tech support.<br>
                 [END ACTIONS]<br><br>
@@ -218,43 +223,25 @@
         }
 
         // Function to copy WTBD text to clipboard
-        function copyToClipboard() {
-            const resultText = document.getElementById("result").innerText;
-            navigator.clipboard.writeText(resultText).then(() => {
-                alert('WTBD text copied to clipboard');
-            });
-        }
-
-        function copyInPopup() {
-            const resultText = document.getElementById("result").innerText;
-            const popup = window.open("", "popup", "width=300,height=200");
-            popup.document.write('<pre>' + resultText + '</pre>');
-            popup.navigator.clipboard.writeText(resultText).then(() => {
-                popup.alert('Text copied to clipboard');
-            });
-        }
-
-
         function copyToClipboard2() {
             const resultText = document.getElementById("result").innerText;
             
-            // Créer un élément temporaire <textarea> pour copier le texte
+            // Create a temporary <textarea> element to copy the text
             const textArea = document.createElement("textarea");
             textArea.value = resultText;
             
-            // Ajouter le textarea temporaire à la page
+            // Append the temporary textarea to the page
             document.body.appendChild(textArea);
             
-            // Sélectionner le texte dans le textarea
+            // Select the text inside the textarea
             textArea.select();
             
-            // Copier le texte sélectionné dans le presse-papiers
+            // Copy the selected text to the clipboard
             document.execCommand('copy');
             
-            // Supprimer le textarea temporaire
+            // Remove the temporary textarea from the page
             document.body.removeChild(textArea);
-
-            alert('Text copied to clipboard');
+ //           alert('Text copied to clipboard');
         }
 
         // Populate dropdowns when the page loads
@@ -280,6 +267,18 @@
         <label for="nodeHostname">Node Hostname:</label>
         <input type="text" id="nodeHostname" placeholder="e.g. Site2-R05-C01-CMB05" oninput="updateResult()">
 
+        <!-- Twin node or JBOD Input -->
+        <label for="enclosureType">Twin node or JBOD Input:</label>
+        <select id="enclosureType" onchange="updateResult()">
+            <option value="" disabled selected>Select TwinServer of JBOD </option>
+            <option value="dual server node">Twin Server</option>
+            <option value="JBOD attached">JBOD</option> 
+        </select>
+
+        <!-- Chassis Serial Number Input -->
+        <label for="chassisSerial">Chassis Serial Number (optional):</label>
+        <input type="text" id="chassisSerial" placeholder="Chassis s/n" oninput="updateResult()">
+
         <!-- Slot Number Input -->
         <label for="slotNumber">Slot Number:</label>
         <input type="number" id="slotNumber" min="0" max="89" placeholder="Slot number" oninput="updateResult()">
@@ -292,16 +291,16 @@
         <label for="hddPN">HDD P/N:</label>
         <select id="hddPN" onchange="updateResult()">
             <option value="" disabled selected>Select HDD P/N</option>
-            <option value="9-07566-01 - CRU/SPARE,ACTIVESCALE X200,DRIVE W/CARRIER,HDD,3.5",18TB NLSAS,512E,SED">18TB - 9-07566-01</option>
-            <option value="22TB - pn22">22TB - pn22</option>
+            <option value="9-07566-01 - CRU/SPARE,ACTIVESCALE X200,DRIVE W/CARRIER,HDD,3.5,18TB NLSAS,512E,SED">18TB - 9-07566-01</option>
+            <option value="9-08202-02 - CRU/SPARE,ACTIVESCALE X200,DRIVE W/CARRIER,HDD,3.5,22TB NLSAS,512E,SED">22TB - 9-08202-02</option> 
         </select>
 
         <!-- Part ETA Input -->
-        <label for="partETA">Part ETA (no value == already on site):</label>
+        <label for="partETA">Part ETA (<span class='default-highlight'>no value</span> == already on site):</label>
         <input type="date" id="partETA" value="" onchange="updateResult()">
 
         <!-- Field Engineer ETA Input -->
-        <label for="feETA">Field Engineer ETA:</label>
+        <label for="feETA">Field Engineer ETA: (<span class='default-highlight'>no value</span> == asap):</label>
         <input type="date" id="feETA" value="" onchange="updateResult()">
 
         <!-- Primary Tech Support Contact Dropdown -->
@@ -321,7 +320,7 @@
 
     <!-- WTBD Result Display -->
     <div class="wtbd-container">
-        <h2>WTBD for X200 disk replacement at GEL</h2>
+        <h2>WTBD for X200 disk replacement at Genomics England</h2>
         <button onclick="copyToClipboard2()">Copy to Clipboard</button>
         <div class="wtbd-field" id="result">
             [WTBD will appear here]
