@@ -153,7 +153,7 @@
             const feETA = document.getElementById("feETA").value;
 
             const formattedPartETA = partETA ? formatDate(partETA) : "<span class='default-highlight'>already on site</span>";
-            const formattedFeETA = feETA ? formatDate(feETA) : "<span class='default-highlight'>ASAP - arrange it with the customer contact</span>";
+            const formattedFeETA = feETA ? formatDate(feETA) : "<span class='default-highlight'>ASAP - arrange a date with the customer contact</span>";
 
             const primaryContact = document.getElementById("primaryContact").value;
             const primaryContactInfo = techSupportContacts[primaryContact];
@@ -178,7 +178,7 @@
             // Site addresses
             const siteAddresses = {
                 "Site1": "Ark Data Centres, Spring Park, P2, Westwells Rd, Corsham, SN13 9GB, United Kingdom",
-                "Site2": "Ark Data Centres  (A103), Cody Technology Park, Bramshot Lane, Farnborough, Hampshire, GU14 0LH, United Kingdom",
+                "Site2": "Ark Data Centres  (A103), Cody Park South Gate, Old Ively Road, Farnborough, GU14 0LH (use postcode GU14 0LL for the location of the South Gate), United Kingdom",
                 "Site3": "Equinix - LD7,  1 Banbury Avenue, Slough, SL1 4LH,  United Kingdom"
             };
             const site = nodeHostname.split('-')[0]; // Extracts the site from the node hostname
@@ -186,7 +186,7 @@
 
             // Update the WTBD result field
             const resultText = `
-                HDD replacement - X200 ${nodeHostname} Slot ${slotNumber} - s/n ${diskSerial}<br><br>
+                HDD replacement - X200 - ${enclosureType} ${nodeHostname} Slot ${slotNumber} - s/n ${diskSerial}<br><br>
                 Please contact Quantum Tech Support if required<br>
                 ${primaryContactText}<br>
                 ${secondaryContactText}<br><br>
@@ -208,7 +208,7 @@
                 [END PARTS]<br><br>
                 [ACTIONS] <br>
                 (1.) Identify the failed HDD with a faulty red LED, and confirm it matches with: <br>
-                ${nodeHostname} (${enclosureType}) ${chassisSerial} - Slot ${slotNumber} - HDD s/n ${diskSerial}<br>
+                ${enclosureType} ${nodeHostname} ${chassisSerial} - Slot ${slotNumber} - HDD s/n ${diskSerial}<br>
                 (2a.) If the serial number is the expected one, replace with the new disk.<br>
                 (2b.) If the serial number is not the expected one or the failed drive does not match with the expected location, contact Quantum tech support.<br>
                 [END ACTIONS]<br><br>
@@ -271,8 +271,8 @@
         <label for="enclosureType">Twin node or JBOD Input:</label>
         <select id="enclosureType" onchange="updateResult()">
             <option value="" disabled selected>Select TwinServer of JBOD </option>
-            <option value="dual server node">Twin Server</option>
-            <option value="JBOD attached">JBOD</option> 
+            <option value="Server NODE ">Twin Server</option>
+            <option value="JBOD attached to node ">JBOD</option> 
         </select>
 
         <!-- Chassis Serial Number Input -->
